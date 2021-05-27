@@ -1,0 +1,1 @@
+define(["uiComponent","Magento_Checkout/js/model/payment/renderer-list"],function(a,b){b.push({type:"eloom_payments_payu_rapipago",component:"Eloom_PayUAr/js/view/payment/method-renderer/rapipago-method"},{type:"eloom_payments_payu_pagofacil",component:"Eloom_PayUAr/js/view/payment/method-renderer/pagofacil-method"});return a.extend({})});

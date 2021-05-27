@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<payment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Payment:etc/payment.xsd">
+	<groups>
+		<group id="eloom_payments_payu_rapipago">
+			<label>Eloom - PayU RapiPago</label>
+		</group>
+		<group id="eloom_payments_payu_pagofacil">
+			<label>Eloom - PayU Pago Fácil</label>
+		</group>
+	</groups>
+</payment>

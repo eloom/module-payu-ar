@@ -1,0 +1,21 @@
+<!-- ko if: isDisplayed() -->
+<table class="data table table-totals extra-fees">
+	<tbody>
+		<tr class="totals title">
+			<th colspan="2" class="mark" scope="row" data-bind="i18n: 'Financial Cost'"></th>
+		</tr>
+		<tr class="totals tea">
+			<th class="mark" scope="row" data-bind="i18n: 'TEA'"></th>
+			<td class="amount">
+				<span class="price" data-bind="text: teaCost()"></span>
+			</td>
+		</tr>
+		<tr class="totals cft">
+			<th class="mark" scope="row" data-bind="i18n: 'CFT'"></th>
+			<td class="amount">
+				<span class="price" data-bind="text: cftCost()"></span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+<!-- /ko -->

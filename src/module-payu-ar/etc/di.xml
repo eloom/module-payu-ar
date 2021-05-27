@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	
+	<preference for="Eloom\PayUAr\Api\FinancialInterface" type="Eloom\PayUAr\Model\Financial" />
+	
+	<!-- Configuration reader -->
+	<type name="Eloom\PayUAr\Gateway\Config\RapiPago\Config">
+		<arguments>
+			<argument name="methodCode" xsi:type="const">Eloom\PayUAr\Model\Ui\RapiPago\ConfigProvider::CODE</argument>
+		</arguments>
+	</type>
+	<type name="Eloom\PayUAr\Gateway\Config\PagoFacil\Config">
+		<arguments>
+			<argument name="methodCode" xsi:type="const">Eloom\PayUAr\Model\Ui\PagoFacil\ConfigProvider::CODE</argument>
+		</arguments>
+	</type>
+	<!-- End Configuration reader -->
+	
+	<virtualType name="EloomPayUPaymentRapiPagoFacade" type="Magento\Payment\Model\Method\Adapter">
+		<arguments>
+			<argument name="code" xsi:type="const">Eloom\PayUAr\Model\Ui\RapiPago\ConfigProvider::CODE</argument>
+			<argument name="formBlockType" xsi:type="string">Eloom\PayUAr\Block\RapiPago\Form</argument>
+			<argument name="infoBlockType" xsi:type="string">Eloom\PayUAr\Block\RapiPago\Info</argument>
+			<argument name="validatorPool" xsi:type="object">EloomPayURapiPagoValidatorPool</argument>
+			<argument name="valueHandlerPool" xsi:type="object">EloomPayURapiPagoValueHandlerPool</argument>
+			<argument name="commandPool" xsi:type="object">EloomPayURapiPagoCommandPool</argument>
+		</arguments>
+	</virtualType>
+	
+	<virtualType name="EloomPayUPaymentPagoFacilFacade" type="Magento\Payment\Model\Method\Adapter">
+		<arguments>
+			<argument name="code" xsi:type="const">Eloom\PayUAr\Model\Ui\PagoFacil\ConfigProvider::CODE</argument>
+			<argument name="formBlockType" xsi:type="string">Eloom\PayUAr\Block\PagoFacil\Form</argument>
+			<argument name="infoBlockType" xsi:type="string">Eloom\PayUAr\Block\PagoFacil\Info</argument>
+			<argument name="validatorPool" xsi:type="object">EloomPayUPagoFacilValidatorPool</argument>
+			<argument name="valueHandlerPool" xsi:type="object">EloomPayUPagoFacilValueHandlerPool</argument>
+			<argument name="commandPool" xsi:type="object">EloomPayUPagoFacilCommandPool</argument>
+		</arguments>
+	</virtualType>
+	<!-- END Payment Method Facade configuration -->
+	
+	<!-- Commands infrastructure -->
+	<virtualType name="EloomPayURapiPagoCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+		<arguments>
+			<argument name="commands" xsi:type="array">
+				<item name="initialize" xsi:type="string">EloomPayURapiPagoAuthorizeCommand</item>
+				<item name="capture" xsi:type="string">EloomPayUCaptureCommand</item>
+				<item name="cancel" xsi:type="string">EloomPayUVoidCommand</item>
+				<item name="void" xsi:type="string">EloomPayUVoidCommand</item>
+				<item name="details" xsi:type="string">EloomPayUOrderDetailCommand</item>
+			</argument>
+		</arguments>
+	</virtualType>
+	<virtualType name="EloomPayUPagoFacilCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">
+		<arguments>
+			<argument name="commands" xsi:type="array">
+				<item name="initialize" xsi:type="string">EloomPayUPagoFacilAuthorizeCommand</item>
+				<item name="capture" xsi:type="string">EloomPayUCaptureCommand</item>
+				<item name="cancel" xsi:type="string">EloomPayUVoidCommand</item>
+				<item name="void" xsi:type="string">EloomPayUVoidCommand</item>
+				<item name="details" xsi:type="string">EloomPayUOrderDetailCommand</item>
+			</argument>
+		</arguments>
+	</virtualType>
+	<!-- End Commands infrastructure -->
+	
+	<!-- Authorization&Capture command  -->
+	<virtualType name="EloomPayURapiPagoAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+		<arguments>
+			<argument name="requestBuilder" xsi:type="object">EloomPayURapiPagoAuthorizeRequest</argument>
+			<argument name="transferFactory" xsi:type="object">EloomPayUPaymentsTransferFactory</argument>
+			<argument name="client" xsi:type="object">Eloom\PayU\Gateway\Http\Client\Payments</argument>
+			<argument name="validator" xsi:type="object">Eloom\PayU\Gateway\Validator\Response\ResponseValidator</argument>
+			<argument name="handler" xsi:type="object">EloomPayURapiPagoAuthorizePaymentHandler</argument>
+			<argument name="errorMessageMapper" xsi:type="object">Eloom\PayU\Gateway\ErrorMapper\VirtualErrorMessageMapper
+			</argument>
+		</arguments>
+	</virtualType>
+	<virtualType name="EloomPayUPagoFacilAuthorizeCommand" type="Magento\Payment\Gateway\Command\GatewayCommand">
+		<arguments>
+			<argument name="requestBuilder" xsi:type="object">EloomPayUPagoFacilAuthorizeRequest</argument>
+			<argument name="transferFactory" xsi:type="object">EloomPayUPaymentsTransferFactory</argument>
+			<argument name="client" xsi:type="object">Eloom\PayU\Gateway\Http\Client\Payments</argument>
+			<argument name="validator" xsi:type="object">Eloom\PayU\Gateway\Validator\Response\ResponseValidator</argument>
+			<argument name="handler" xsi:type="object">EloomPayUPagoFacilAuthorizePaymentHandler</argument>
+			<argument name="errorMessageMapper" xsi:type="object">Eloom\PayU\Gateway\ErrorMapper\VirtualErrorMessageMapper
+			</argument>
+		</arguments>
+	</virtualType>
+	<!-- Request Builder -->
+	
+	<virtualType name="EloomPayURapiPagoAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+		<arguments>
+			<argument name="builders" xsi:type="array">
+				<item name="general" xsi:type="string">Eloom\PayU\Gateway\Request\Payment\GeneralDataBuilder</item>
+				<item name="transaction" xsi:type="string">Eloom\PayU\Gateway\Request\Payment\AuthorizeDataBuilder</item>
+				<item name="rapipago" xsi:type="string">Eloom\PayUAr\Gateway\Request\Payment\RapiPagoDataBuilder</item>
+			</argument>
+		</arguments>
+	</virtualType>
+	
+	<virtualType name="EloomPayUPagoFacilAuthorizeRequest" type="Magento\Payment\Gateway\Request\BuilderComposite">
+		<arguments>
+			<argument name="builders" xsi:type="array">
+				<item name="general" xsi:type="string">Eloom\PayU\Gateway\Request\Payment\GeneralDataBuilder</item>
+				<item name="transaction" xsi:type="string">Eloom\PayU\Gateway\Request\Payment\AuthorizeDataBuilder</item>
+				<item name="pagoFacil" xsi:type="string">Eloom\PayUAr\Gateway\Request\Payment\PagoFacilDataBuilder</item>
+			</argument>
+		</arguments>
+	</virtualType>
+	
+	<!-- Handlers -->
+	<virtualType name="EloomPayURapiPagoAuthorizePaymentHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+		<arguments>
+			<argument name="handlers" xsi:type="array">
+				<item name="payment_details" xsi:type="string">
+					Eloom\PayUAr\Gateway\Response\Payment\RapiPagoAuthorisationDetailsHandler
+				</item>
+			</argument>
+		</arguments>
+	</virtualType>
+	<virtualType name="EloomPayUPagoFacilAuthorizePaymentHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+		<arguments>
+			<argument name="handlers" xsi:type="array">
+				<item name="payment_details" xsi:type="string">
+					Eloom\PayUAr\Gateway\Response\Payment\PagoFacilAuthorisationDetailsHandler
+				</item>
+			</argument>
+		</arguments>
+	</virtualType>
+	<!-- END Handlers -->
+	
+	<!-- Value handlers infrastructure -->
+	<virtualType name="EloomPayURapiPagoValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+		<arguments>
+			<argument name="handlers" xsi:type="array">
+				<item name="default" xsi:type="string">EloomPayURapiPagoConfigValueHandler</item>
+			</argument>
+		</arguments>
+	</virtualType>
+	<virtualType name="EloomPayUPagoFacilValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+		<arguments>
+			<argument name="handlers" xsi:type="array">
+				<item name="default" xsi:type="string">EloomPayUPagoFacilConfigValueHandler</item>
+			</argument>
+		</arguments>
+	</virtualType>
+	
+	<!-- Value Handler -->
+	<virtualType name="EloomPayURapiPagoConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+		<arguments>
+			<argument name="configInterface" xsi:type="object">Eloom\PayUAr\Gateway\Config\RapiPago\Config</argument>
+		</arguments>
+	</virtualType>
+	<virtualType name="EloomPayUPagoFacilConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+		<arguments>
+			<argument name="configInterface" xsi:type="object">Eloom\PayUAr\Gateway\Config\PagoFacil\Config</argument>
+		</arguments>
+	</virtualType>
+	<!-- END  Value Handler -->
+	
+	<!-- Validators infrastructure -->
+	<virtualType name="EloomPayURapiPagoValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+		<arguments>
+			<argument name="validators" xsi:type="array">
+				<item name="global" xsi:type="string">EloomPayURequestValidator</item>
+				<item name="country" xsi:type="string">EloomPayUCountryValidator</item>
+			</argument>
+		</arguments>
+	</virtualType>
+	<virtualType name="EloomPayUPagoFacilValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+		<arguments>
+			<argument name="validators" xsi:type="array">
+				<item name="global" xsi:type="string">EloomPayURequestValidator</item>
+				<item name="country" xsi:type="string">EloomPayUCountryValidator</item>
+			</argument>
+		</arguments>
+	</virtualType>
+	<!-- END Validators infrastructure -->
+</config>

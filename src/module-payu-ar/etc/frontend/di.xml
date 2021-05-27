@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	<type name="Eloom\PayUAr\Model\Ui\RapiPago\ConfigProvider">
+		<arguments>
+			<argument name="config" xsi:type="object">Eloom\PayU\Gateway\Config\Config</argument>
+			<argument name="rapiPagoConfig" xsi:type="object">Eloom\PayUAr\Gateway\Config\RapiPago\Config</argument>
+		</arguments>
+	</type>
+	<type name="Eloom\PayUAr\Model\Ui\PagoFacil\ConfigProvider">
+		<arguments>
+			<argument name="config" xsi:type="object">Eloom\PayU\Gateway\Config\Config</argument>
+			<argument name="pagoFacilConfig" xsi:type="object">Eloom\PayUAr\Gateway\Config\PagoFacil\Config</argument>
+		</arguments>
+	</type>
+
+	<type name="Magento\Checkout\Model\CompositeConfigProvider">
+		<arguments>
+			<argument name="configProviders" xsi:type="array">
+				<item name="eloom_payments_payu_rapipago_config_provider" xsi:type="object">
+					Eloom\PayUAr\Model\Ui\RapiPago\ConfigProvider
+				</item>
+				<item name="eloom_payments_payu_pagofacil_config_provider" xsi:type="object">
+					Eloom\PayUAr\Model\Ui\PagoFacil\ConfigProvider
+				</item>
+			</argument>
+		</arguments>
+	</type>
+</config>
