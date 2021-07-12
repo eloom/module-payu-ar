@@ -1,4 +1,4 @@
-# PayU Argentina para (Magento 2)
+# PayU Argentina para Magento 2
 
 ## Licencia
 
@@ -15,5 +15,5 @@ Instale [PayU Latam](https://github.com/eloom/module-payu).
 * [Sitio web](https://eloom.tech/payu-latam)
 * [Documentación](https://docs.eloom.tech/payu-latam)
 * [Issue tracker](https://github.com/eloom/module-payu-ar/issues)
-* [Composer](https://packagist.org/packages/eloom/module-payu-ar)
+* [Composer](https://app.repman.io/organization/eloom/package/1515daad-e230-4c9f-95be-bdc95b62ef34/details)
 * [Codigo fuente](https://github.com/eloom/module-payu-ar)
