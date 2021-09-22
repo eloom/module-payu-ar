@@ -32,10 +32,10 @@ class Financial implements FinancialInterface {
 	
 	private $checkoutSession;
 	
-	public function __construct(Json $serializer = null,
-	                            Config $config,
+	public function __construct(Json     $serializer = null,
+	                            Config   $config,
 	                            CcConfig $ccConfig,
-	                            Session $checkoutSession) {
+	                            Session  $checkoutSession) {
 		
 		$this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
 		$this->config = $config;
@@ -53,11 +53,13 @@ class Financial implements FinancialInterface {
 			foreach (range($range['from'], $range['to']) as $installment) {
 				$interest = floatval($range['interest']);
 				
-				$data[] = [
-					'key' => $installment,
-					'tea' => floatval($range['tea']),
-					'cft' => round((pow(1 + ($interest / 100), 12) -1) * 100, 2),
-				];
+				if (isset($range['tea'])) {
+					$data[] = [
+						'key' => $installment,
+						'tea' => floatval($range['tea']),
+						'cft' => round((pow(1 + ($interest / 100), 12) - 1) * 100, 2),
+					];
+				}
 			}
 		}
 		
